@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AcreLogix — Precision software. Field execution.</title>
+<meta name="description" content="AcreLogix is the operating system for agriculture — a unified platform that digitises production, traceability, logistics and trade across plantations, farms and food supply chains. A subsidiary of HealthBank Holdings Ltd.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#173225;
+  --forest-2:#224a35;
+  --canopy:#2e5c42;
+  --bone:#f4f3ec;
+  --bone-2:#eceade;
+  --sage:#e6ebe0;
+  --ink:#20261f;
+  --ink-soft:#4d564c;
+  --teal:#0fa47f;
+  --teal-soft:#d9efe7;
+  --line:#d6d4c6;
+  --line-dark:rgba(244,243,236,.16);
+  --white:#ffffff;
+  --radius:10px;
+  --maxw:1180px;
+  --font-display:'Archivo',sans-serif;
+  --font-body:'Public Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--font-body);color:var(--ink);background:var(--bone);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;overflow-x:hidden;width:100%}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--teal)}
+h1,h2,h3{font-family:var(--font-display);line-height:1.08;letter-spacing:-.015em}
+h2{font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:700}
+.section{padding:96px 0}
+.section-head{max-width:640px;margin-bottom:56px}
+.section-head p{margin-top:14px;color:var(--ink-soft);font-size:1.05rem}
+.section-head h2{margin-top:14px}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:3px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:60;background:rgba(244,243,236,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:30px;height:30px}
+.logo-word{font-family:var(--font-display);font-size:1.22rem;letter-spacing:-.01em}
+.logo-word .lt{font-weight:500}
+.logo-word .bd{font-weight:800}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:.9rem;font-weight:500;color:var(--ink-soft);transition:color .18s}
+.nav-links a:hover{color:var(--forest)}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:600;font-size:.92rem;padding:12px 22px;border-radius:var(--radius);border:1.5px solid transparent;cursor:pointer;transition:transform .16s,background .16s,border-color .16s}
+.btn:hover{transform:translateY(-1px)}
+.btn-solid{background:var(--forest);color:var(--bone)}
+.btn-solid:hover{background:var(--forest-2)}
+.btn-outline{border-color:var(--forest);color:var(--forest);background:transparent}
+.btn-outline:hover{background:rgba(23,50,37,.06)}
+.btn-teal{background:var(--teal);color:#fff}
+.nav .btn{padding:9px 18px}
+.nav-burger{display:none;background:none;border:none;cursor:pointer;padding:6px}
+.nav-burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0}
+
+/* ---------- hero ---------- */
+.hero{background:var(--forest);color:var(--bone);position:relative;overflow:hidden}
+.hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding-top:96px;padding-bottom:88px}
+.hero-inner > *{min-width:0}
+.hero .eyebrow{color:#7dd4b8}
+.hero .eyebrow::before{background:#7dd4b8}
+.hero h1{font-size:clamp(2.5rem,5.2vw,3.9rem);font-weight:800;margin-top:18px}
+.hero h1 em{font-style:normal;color:#7dd4b8}
+.hero-sub{margin-top:22px;font-size:1.1rem;color:rgba(244,243,236,.82);max-width:520px}
+.hero-ctas{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+.hero-note{margin-top:26px;font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;color:rgba(244,243,236,.55)}
+.fieldviz{position:relative;min-width:0}
+.fieldviz svg{width:100%;height:auto;display:block}
+.cred{border-top:1px solid var(--line-dark);background:var(--forest)}
+.cred-inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;padding-top:22px;padding-bottom:22px;color:rgba(244,243,236,.75);font-size:.88rem;align-items:center}
+.cred b{color:var(--bone);font-weight:600}
+.cred-stats{display:flex;gap:36px;flex-wrap:wrap}
+.cred-stats div{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.05em}
+.cred-stats span{color:#7dd4b8}
+
+/* ---------- problem ---------- */
+.problem{background:var(--bone-2);border-bottom:1px solid var(--line)}
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.problem-grid > *{min-width:0}
+.legacy-list{list-style:none;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.legacy-list li{display:flex;gap:16px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+.legacy-list .tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;color:#a8543f;white-space:nowrap;text-transform:uppercase}
+.problem h2 span{color:var(--teal)}
+
+/* ---------- pillars ---------- */
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.pillars-grid > *{min-width:0}
+.pillar{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:34px 30px;display:flex;flex-direction:column;gap:14px;transition:transform .2s,box-shadow .2s}
+.pillar:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(23,50,37,.1)}
+.pillar-tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.pillar h3{font-size:1.35rem;font-weight:700}
+.pillar h3 b{color:var(--teal)}
+.pillar p{color:var(--ink-soft);font-size:.95rem;flex:1}
+.pillar-foot{font-family:var(--font-mono);font-size:.74rem;color:var(--forest);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:14px}
+.pillar-ico{width:40px;height:40px}
+
+/* ---------- capabilities ---------- */
+.caps{background:var(--sage);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.caps-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.caps-cols > *{min-width:0}
+.caps-col{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;display:flex;flex-direction:column}
+.caps-num{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.caps-verb{font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--forest);line-height:1;margin-top:10px}
+.caps-verb em{font-style:normal;color:var(--teal)}
+.caps-col ul{list-style:none;margin-top:16px;flex:1}
+.caps-col li{padding:14px 0;border-bottom:1px solid var(--line)}
+.caps-col li:last-child{border-bottom:none;padding-bottom:18px}
+.caps-col li strong{display:block;font-weight:600;font-size:.95rem;margin-bottom:3px;color:var(--ink)}
+.caps-col li p{font-size:.86rem;color:var(--ink-soft)}
+.caps-outcome{margin-top:auto;padding:14px 16px;background:var(--teal-soft);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;font-size:.9rem;color:var(--forest);font-weight:500}
+.caps-outcome b{font-family:var(--font-mono);font-weight:500;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:5px;color:var(--teal)}
+
+/* ---------- vision & mission ---------- */
+.vm{background:var(--forest);color:var(--bone)}
+.vm .eyebrow{color:#7dd4b8}
+.vm .eyebrow::before{background:#7dd4b8}
+.vm-belief{margin-top:22px;color:rgba(244,243,236,.75);max-width:720px;font-size:1.02rem}
+.vm-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
+.vm-grid > *{min-width:0}
+.vm-card{border:1px solid var(--line-dark);border-radius:var(--radius);padding:36px 32px;background:rgba(244,243,236,.03)}
+.vm-card .k{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#7dd4b8}
+.vm-card p{margin-top:14px;font-family:var(--font-display);font-size:1.3rem;font-weight:600;line-height:1.4}
+
+/* ---------- chain ---------- */
+.chain-track{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--white)}
+.chain-track > *{min-width:0}
+.chain-step{padding:28px 22px;border-right:1px solid var(--line);position:relative}
+.chain-step:last-child{border-right:none}
+.chain-step .num{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.12em;color:var(--teal)}
+.chain-step h4{font-family:var(--font-display);font-size:1rem;font-weight:700;margin:10px 0 6px}
+.chain-step p{font-size:.82rem;color:var(--ink-soft)}
+.chain-step::after{content:"→";position:absolute;right:-9px;top:26px;color:var(--teal);background:var(--white);z-index:2;font-size:.85rem}
+.chain-step:last-child::after{display:none}
+.chain-note{margin-top:20px;font-family:var(--font-mono);font-size:.75rem;color:var(--ink-soft);letter-spacing:.04em}
+
+/* ---------- audiences ---------- */
+.aud-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.chip{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink-soft);white-space:nowrap}
+.aud-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.aud-grid > *{min-width:0}
+.aud-card{border-radius:var(--radius);padding:44px 40px;display:flex;flex-direction:column;gap:16px}
+.aud-owners{background:var(--white);border:1px solid var(--line)}
+.aud-investors{background:var(--forest);color:var(--bone)}
+.aud-card h3{font-size:1.55rem;font-weight:700}
+.aud-card .aud-tag{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase}
+.aud-owners .aud-tag{color:var(--teal)}
+.aud-investors .aud-tag{color:#7dd4b8}
+.aud-card ul{list-style:none;display:flex;flex-direction:column;gap:12px;flex:1}
+.aud-card li{display:flex;gap:12px;font-size:.95rem}
+.aud-owners li{color:var(--ink-soft)}
+.aud-investors li{color:rgba(244,243,236,.8)}
+.aud-card li::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--teal);flex-shrink:0;margin-top:8px}
+.aud-investors li::before{background:#7dd4b8}
+.aud-card .btn{align-self:flex-start;margin-top:10px}
+.aud-investors .btn-outline{border-color:#7dd4b8;color:#7dd4b8}
+.aud-investors .btn-outline:hover{background:rgba(125,212,184,.1)}
+
+/* ---------- governance ---------- */
+.gov{background:var(--bone-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.gov-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.gov-grid > *{min-width:0}
+.gov-facts{list-style:none;border-top:1px solid var(--line)}
+.gov-facts li{display:grid;grid-template-columns:180px 1fr;gap:20px;padding:16px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.gov-facts .k{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);padding-top:3px}
+.gov-facts .v{color:var(--ink)}
+
+/* ---------- final cta ---------- */
+.final{background:var(--forest);color:var(--bone);text-align:center}
+.final h2{font-size:clamp(2rem,4vw,3rem);font-weight:800;max-width:720px;margin:0 auto}
+.final h2 em{font-style:normal;color:#7dd4b8}
+.final p{margin:18px auto 0;max-width:520px;color:rgba(244,243,236,.75)}
+.final .hero-ctas{justify-content:center}
+
+/* ---------- footer ---------- */
+.footer{background:#101f17;color:rgba(244,243,236,.65);padding:56px 0 36px;font-size:.88rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:44px}
+.footer h5{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,243,236,.4);margin-bottom:16px}
+.footer ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer a:hover{color:var(--bone)}
+.footer-brand p{margin-top:14px;max-width:300px;font-size:.85rem}
+.footer-bottom{border-top:1px solid var(--line-dark);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:rgba(244,243,236,.4)}
+
+/* ---------- contact modal ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,31,23,.6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200;opacity:0;pointer-events:none;transition:opacity .2s ease}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal-panel{background:var(--white);border-radius:14px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;padding:34px 32px 28px;position:relative;transform:translateY(14px);transition:transform .2s ease;box-shadow:0 30px 70px rgba(16,31,23,.35)}
+.modal-overlay.open .modal-panel{transform:translateY(0)}
+.modal-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:none;background:var(--bone-2);color:var(--ink-soft);font-size:1.1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:var(--line)}
+.modal-tag{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal)}
+.modal-panel h3{font-family:var(--font-display);font-size:1.5rem;font-weight:700;margin-top:10px;color:var(--ink)}
+.modal-route{margin-top:8px;font-size:.85rem;color:var(--ink-soft)}
+.modal-route b{color:var(--forest);font-weight:600}
+.field{margin-top:18px;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.8rem;font-weight:600;color:var(--ink)}
+.field input,.field textarea{font-family:var(--font-body);font-size:.95rem;padding:11px 13px;border:1.5px solid var(--line);border-radius:8px;background:var(--bone);color:var(--ink);resize:vertical;transition:border-color .15s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--teal)}
+.field-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.modal-submit{margin-top:22px;width:100%;justify-content:center}
+.modal-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.modal-msg{margin-top:14px;font-size:.85rem;padding:11px 13px;border-radius:8px;display:none}
+.modal-msg.show{display:block}
+.modal-msg.error{background:#fbeae6;color:#a8543f}
+.modal-msg.success{background:var(--teal-soft);color:var(--forest)}
+.modal-success{text-align:center;padding:20px 0 6px}
+.modal-success svg{width:52px;height:52px;margin:0 auto 16px}
+.modal-success h3{margin-top:0}
+.modal-success p{margin-top:10px;color:var(--ink-soft);font-size:.92rem}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .pulse{animation:none!important}
+  .btn:hover,.pillar:hover{transform:none}
+}
+.pulse{animation:pulse 2.6s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+/* ---------- responsive ---------- */
+@media (max-width:1020px){
+  .hero-inner{grid-template-columns:1fr;padding-top:72px;padding-bottom:64px}
+  .fieldviz{max-width:560px}
+  .pillars-grid,.caps-cols{grid-template-columns:1fr;gap:28px}
+  .chain-track{grid-template-columns:repeat(3,1fr)}
+  .chain-step:nth-child(3)::after{display:none}
+  .chain-step:nth-child(-n+3){border-bottom:1px solid var(--line)}
+  .aud-grid,.problem-grid,.gov-grid,.vm-grid{grid-template-columns:1fr;gap:36px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--bone);flex-direction:column;padding:20px 28px;gap:18px;border-bottom:1px solid var(--line);align-items:flex-start}
+  .nav-links.open{display:flex}
+  .nav-burger{display:block}
+  .section{padding:68px 0}
+  .chain-track{grid-template-columns:1fr}
+  .chain-step{border-right:none;border-bottom:1px solid var(--line)}
+  .chain-step:last-child{border-bottom:none}
+  .chain-step::after{content:"↓";right:22px;top:auto;bottom:-9px}
+  .gov-facts li{grid-template-columns:1fr;gap:4px}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="#" aria-label="AcreLogix home">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 2 L29 8 V18 C29 25 23 29.5 16 31 C9 29.5 3 25 3 18 V8 Z" fill="#173225"/>
+        <path d="M8 22 L20 12 M8 17 L17 9.5 M11 25 L23 15" stroke="#f4f3ec" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="23" cy="9" r="3" fill="#0fa47f"/>
+        <circle cx="23" cy="9" r="1.2" fill="#f4f3ec"/>
+      </svg>
+      <span class="logo-word"><span class="lt">Acre</span><span class="bd">Logix</span></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main">
+      <a href="#platform">Platform</a>
+      <a href="#capabilities">Technology</a>
+      <a href="#owners">For owners</a>
+      <a href="#investors">For investors</a>
+      <a href="#about">About</a>
+      <button type="button" class="btn btn-solid" onclick="openContact('demo')">Request a demo</button>
+    </nav>
+    <button class="nav-burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <p class="eyebrow">Plantation management, run for you</p>
+      <h1>Precision software.<br><em>Field execution.</em></h1>
+      <p class="hero-sub">AcreLogix runs the day-to-day of your agricultural operation — one platform for weather intelligence, logistics, quality and export, backed by teams on the ground. You hold the land. We run the operation.</p>
+      <div class="hero-ctas">
+        <button type="button" class="btn btn-teal" onclick="openContact('demo')">Request a demo</button>
+        <button type="button" class="btn btn-outline" style="border-color:rgba(244,243,236,.5);color:var(--bone)" onclick="openContact('investor-relations')">Investor relations</button>
+      </div>
+      <p class="hero-note">BUILT FOR AGRICULTURE · ANY CROP · FARM TO GLOBAL MARKETS</p>
+    </div>
+
+    <!-- signature: plantation grid → data nodes -->
+    <div class="fieldviz" aria-hidden="true">
+      <svg viewBox="0 0 520 420" fill="none">
+        <rect x="10" y="10" width="500" height="400" rx="14" fill="#122a1f" stroke="rgba(244,243,236,.14)"/>
+        <!-- crop rows -->
+        <g stroke="rgba(125,212,184,.28)" stroke-width="1.2">
+          <path d="M40 380 L300 60"/><path d="M80 390 L340 70"/><path d="M120 396 L380 78"/>
+          <path d="M160 398 L420 84"/><path d="M200 400 L455 92"/><path d="M240 402 L480 110"/>
+        </g>
+        <!-- tree dots along rows -->
+        <g fill="rgba(125,212,184,.5)">
+          <circle cx="92" cy="316" r="3"/><circle cx="144" cy="252" r="3"/><circle cx="196" cy="188" r="3"/><circle cx="248" cy="124" r="3"/>
+          <circle cx="140" cy="316" r="3"/><circle cx="192" cy="252" r="3"/><circle cx="244" cy="188" r="3"/><circle cx="296" cy="124" r="3"/>
+          <circle cx="188" cy="322" r="3"/><circle cx="240" cy="258" r="3"/><circle cx="292" cy="194" r="3"/><circle cx="344" cy="130" r="3"/>
+          <circle cx="236" cy="326" r="3"/><circle cx="288" cy="262" r="3"/><circle cx="340" cy="198" r="3"/><circle cx="392" cy="134" r="3"/>
+          <circle cx="284" cy="330" r="3"/><circle cx="336" cy="266" r="3"/><circle cx="388" cy="202" r="3"/><circle cx="436" cy="142" r="3"/>
+        </g>
+        <!-- active data nodes -->
+        <g class="pulse">
+          <circle cx="196" cy="188" r="9" stroke="#0fa47f" stroke-width="1.4"/>
+          <circle cx="196" cy="188" r="4" fill="#0fa47f"/>
+        </g>
+        <g class="pulse" style="animation-delay:.9s">
+          <circle cx="340" cy="198" r="9" stroke="#0fa47f" stroke-width="1.4"/>
+          <circle cx="340" cy="198" r="4" fill="#0fa47f"/>
+        </g>
+        <g class="pulse" style="animation-delay:1.7s">
+          <circle cx="248" cy="124" r="9" stroke="#0fa47f" stroke-width="1.4"/>
+          <circle cx="248" cy="124" r="4" fill="#0fa47f"/>
+        </g>
+        <!-- callouts -->
+        <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#eafaf3">
+          <line x1="196" y1="188" x2="118" y2="140" stroke="#0fa47f" stroke-width="1"/>
+          <rect x="34" y="112" width="120" height="30" rx="5" fill="#173225" stroke="rgba(15,164,127,.5)"/>
+          <text x="44" y="131">BLK-07 · SOIL 34%</text>
+
+          <line x1="340" y1="198" x2="404" y2="256" stroke="#0fa47f" stroke-width="1"/>
+          <rect x="352" y="256" width="140" height="30" rx="5" fill="#173225" stroke="rgba(15,164,127,.5)"/>
+          <text x="362" y="275">T-04182 · HEALTH 92</text>
+
+          <line x1="248" y1="124" x2="312" y2="52" stroke="#0fa47f" stroke-width="1"/>
+          <rect x="300" y="30" width="176" height="30" rx="5" fill="#173225" stroke="rgba(15,164,127,.5)"/>
+          <text x="310" y="49">TRUCK 03 · ETA MILL 14:20</text>
+        </g>
+        <!-- footer strip -->
+        <g font-family="IBM Plex Mono,monospace" font-size="9.5" fill="rgba(244,243,236,.45)">
+          <text x="30" y="398">LIVE FIELD TELEMETRY</text>
+          <text x="392" y="398">1.3521° N, 103.8198° E</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="cred">
+    <div class="wrap cred-inner">
+      <div>A subsidiary of <b>HealthBank Holdings Ltd</b></div>
+      <div class="cred-stats">
+        <div><span>TREE-LEVEL</span> INVENTORY &amp; HEALTH SCORING</div>
+        <div><span>24/7</span> IoT FIELD TELEMETRY</div>
+        <div><span>6 STAGES</span> DIGITIZED, BLOCK TO PORT</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM ================= -->
+<section class="problem section">
+  <div class="wrap problem-grid">
+    <div class="reveal">
+      <p class="eyebrow">Why AcreLogix exists</p>
+      <h2 style="margin-top:14px">Agriculture still runs on spreadsheets, phone calls and WhatsApp groups. <span>That's where profit leaks.</span></h2>
+      <p style="margin-top:16px;color:var(--ink-soft)">Every handoff between the field, the truck, the mill and the port is a chance for delay, dispute or data loss. AcreLogix replaces the patchwork with one accountable system — and one accountable operator.</p>
+    </div>
+    <ul class="legacy-list reveal">
+      <li><span class="tag">Replaced</span>Spreadsheets for harvest and yield records, retyped into the ERP by hand</li>
+      <li><span class="tag">Replaced</span>WhatsApp groups for transport requests and delivery confirmations</li>
+      <li><span class="tag">Replaced</span>Manual phone calls to coordinate trucks across estates, mills and ports</li>
+      <li><span class="tag">Replaced</span>Paper-based export documentation and phytosanitary processing</li>
+      <li><span class="tag">Replaced</span>Quality disputes settled by memory instead of graded evidence</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PILLARS ================= -->
+<section class="section" id="platform">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">One brand, three delivery layers</p>
+      <h2>Software companies don't do dirt. Operators don't do data. We do both.</h2>
+      <p>Every AcreLogix engagement combines the platform, the people and the field tooling — so accountability never splits across vendors.</p>
+    </div>
+    <div class="pillars-grid">
+      <article class="pillar reveal">
+        <svg class="pillar-ico" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="4" y="6" width="32" height="22" rx="3" stroke="#173225" stroke-width="2"/><path d="M10 22 L16 15 L22 19 L30 11" stroke="#0fa47f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 34 h12" stroke="#173225" stroke-width="2" stroke-linecap="round"/></svg>
+        <p class="pillar-tag">The platform</p>
+        <h3>AcreLogix <b>Core</b></h3>
+        <p>The cloud command centre: estate dashboards, drone mapping, tree-level inventory, AI forecasting and logistics coordination — one source of truth from block to buyer.</p>
+        <p class="pillar-foot">WEB DASHBOARD · API · ERP SYNC</p>
+      </article>
+      <article class="pillar reveal">
+        <svg class="pillar-ico" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 4 L34 11 V21 C34 29 28 33.5 20 36 C12 33.5 6 29 6 21 V11 Z" stroke="#173225" stroke-width="2"/><path d="M13 21 l5 5 l9 -11" stroke="#0fa47f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="pillar-tag">The operation</p>
+        <h3>AcreLogix <b>Field</b></h3>
+        <p>Boots-on-the-ground management: labor logistics, machinery deployment, agronomy standards and quality enforcement. We don't just provide the data — we execute the work.</p>
+        <p class="pillar-foot">SUPERVISION · LABOR · MACHINERY</p>
+      </article>
+      <article class="pillar reveal">
+        <svg class="pillar-ico" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="12" y="4" width="16" height="32" rx="3" stroke="#173225" stroke-width="2"/><circle cx="20" cy="31" r="1.6" fill="#173225"/><path d="M16 14 q4 -5 8 0 M17.5 18 q2.5 -3 5 0" stroke="#0fa47f" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+        <p class="pillar-tag">The field tool</p>
+        <h3>AcreLogix <b>Mobile</b></h3>
+        <p>An offline-first app for supervisors in remote blocks. Log harvests, request transport and grade fruit with no signal — everything syncs the moment coverage returns.</p>
+        <p class="pillar-foot">OFFLINE-FIRST · WHATSAPP BOT</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CAPABILITIES ================= -->
+<section class="caps section" id="capabilities">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Platform capabilities</p>
+      <h2>The operating system for agriculture.</h2>
+      <p>One platform. Eight systems. Three missions — <strong>Predict, Prove, Move</strong> — across plantations, farms and food supply chains.</p>
+    </div>
+    <div class="caps-cols">
+      <div class="caps-col reveal">
+        <span class="caps-num">01 · Intelligence</span>
+        <h3 class="caps-verb">Predict<em>.</em></h3>
+        <ul>
+          <li><strong>AI weather forecasting</strong><p>Rainfall and harvest-readiness predictions for specific blocks and fields, not just the region.</p></li>
+          <li><strong>AI logistics coordination</strong><p>Optimised truck routing across estates, mills, warehouses and ports — fewer empty runs, tighter windows.</p></li>
+          <li><strong>IoT field sensors</strong><p>Temperature, humidity, soil moisture and rainfall streamed live into the forecasting models.</p></li>
+        </ul>
+        <div class="caps-outcome"><b>The outcome</b>Know when to harvest. Reduce weather risk. Increase yield.</div>
+      </div>
+      <div class="caps-col reveal">
+        <span class="caps-num">02 · Traceability</span>
+        <h3 class="caps-verb">Prove<em>.</em></h3>
+        <ul>
+          <li><strong>Crop &amp; tree-level inventory</strong><p>Every tree and block registered with age, yield history and health scores — your asset register, alive.</p></li>
+          <li><strong>Image-based quality grading</strong><p>Consistent, photographic quality standards at every handoff. Disputes end where evidence begins.</p></li>
+          <li><strong>End-to-end delivery tracking</strong><p>Transport requests, live status and confirmed receipts — the full chain of custody on record.</p></li>
+        </ul>
+        <div class="caps-outcome"><b>The outcome</b>End quality disputes. Pass audits. Command premium prices.</div>
+      </div>
+      <div class="caps-col reveal">
+        <span class="caps-num">03 · Trade &amp; logistics</span>
+        <h3 class="caps-verb">Move<em>.</em></h3>
+        <ul>
+          <li><strong>Customs automation</strong><p>Export documentation and Phytosanitary Certificate processing handled inside the platform.</p></li>
+          <li><strong>ERP integration</strong><p>Two-way sync with your existing management systems. Data is entered once, everywhere.</p></li>
+          <li><strong>Multi-platform access</strong><p>Web dashboard for HQ, mobile app for the field, WhatsApp bot for everyone in between.</p></li>
+        </ul>
+        <div class="caps-outcome"><b>The outcome</b>Reach markets faster. Cut logistics costs. Never stall on paperwork.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHAIN ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Root to market</p>
+      <h2>One system of record across the whole chain.</h2>
+      <p>Six stages, each one measured, each handoff logged. This is the traceability backbone regulators and export buyers increasingly require.</p>
+    </div>
+    <div class="chain-track reveal">
+      <div class="chain-step"><span class="num">BLOCK</span><h4>Grow</h4><p>Tree inventory, sensor telemetry, block-level forecasts.</p></div>
+      <div class="chain-step"><span class="num">HARVEST</span><h4>Pick</h4><p>Readiness alerts, crew scheduling, yield capture in the field.</p></div>
+      <div class="chain-step"><span class="num">TRANSPORT</span><h4>Move</h4><p>One-tap transport requests, AI-routed trucks, live ETAs.</p></div>
+      <div class="chain-step"><span class="num">MILL</span><h4>Grade</h4><p>Image-based grading and confirmed receipts at intake.</p></div>
+      <div class="chain-step"><span class="num">PORT</span><h4>Clear</h4><p>Automated export docs and phytosanitary certificates.</p></div>
+      <div class="chain-step"><span class="num">MARKET</span><h4>Settle</h4><p>ERP-synced records for invoicing, audit and reporting.</p></div>
+    </div>
+    <p class="chain-note">EVERY STAGE FEEDS THE SAME LEDGER — NO RETYPING, NO GAPS, NO DISPUTES.</p>
+  </div>
+</section>
+
+<!-- ================= VISION & MISSION ================= -->
+<section class="vm section" id="vision">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin-bottom:0;max-width:760px">
+      <p class="eyebrow">Why AcreLogix exists</p>
+      <h2>Agriculture deserves the same infrastructure as the world's most advanced industries.</h2>
+    </div>
+    <p class="vm-belief reveal">We believe agriculture should be as connected, intelligent and transparent as any advanced industry. AcreLogix is building the platform that lets governments, producers, processors, logistics providers and buyers operate from a single source of truth.</p>
+    <div class="vm-grid">
+      <div class="vm-card reveal">
+        <span class="k">Our vision</span>
+        <p>To become the digital operating infrastructure powering agriculture across Asia and beyond.</p>
+      </div>
+      <div class="vm-card reveal">
+        <span class="k">Our mission</span>
+        <p>To digitise every stage of agriculture — from tree to trade — using AI, IoT and intelligent automation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AUDIENCES ================= -->
+<section class="section" id="owners">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Who we serve</p>
+      <h2>Built for the people who grow — and the institutions who back them.</h2>
+      <div class="aud-chips">
+        <span class="chip">Plantation owners</span>
+        <span class="chip">Agricultural estates</span>
+        <span class="chip">Agribusinesses</span>
+        <span class="chip">Investors &amp; government stakeholders</span>
+      </div>
+    </div>
+    <div class="aud-grid">
+    <div class="aud-card aud-owners reveal">
+      <p class="aud-tag">For plantation owners</p>
+      <h3>You own the land. We run the business.</h3>
+      <ul>
+        <li>A single accountable operator for software, labor and logistics — no vendor finger-pointing</li>
+        <li>Standards enforced in the field, not just written in a manual</li>
+        <li>Yield, cost and quality visible in one dashboard, updated from the ground</li>
+        <li>Focus on your real estate portfolio while the operation compounds in value</li>
+      </ul>
+      <button type="button" class="btn btn-solid" onclick="openContact('demo')">Request a demo</button>
+    </div>
+    <div class="aud-card aud-investors reveal" id="investors">
+      <p class="aud-tag">For investors &amp; government stakeholders</p>
+      <h3>Agri-digitalisation with governance built in.</h3>
+      <ul>
+        <li>Subsidiary of HealthBank Holdings Ltd — established corporate governance and reporting</li>
+        <li>Full-chain traceability data that supports ESG, food-safety and export compliance mandates</li>
+        <li>A platform aligned with national agriculture digitalisation and productivity programmes</li>
+        <li>Crop-agnostic architecture built to scale across plantations, farms and food supply chains</li>
+      </ul>
+      <button type="button" class="btn btn-outline" onclick="openContact('investor-brief')">Request the investor brief</button>
+    </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GOVERNANCE ================= -->
+<section class="gov section" id="about">
+  <div class="wrap gov-grid">
+    <div class="reveal">
+      <p class="eyebrow">About AcreLogix</p>
+      <h2 style="margin-top:14px">Built on institutional foundations.</h2>
+      <p style="margin-top:16px;color:var(--ink);font-size:1.05rem;font-weight:500">AcreLogix is an AI-powered digital platform that helps agricultural businesses manage operations, traceability and logistics — from field to delivery.</p>
+      <p style="margin-top:14px;color:var(--ink-soft)">We operate as a subsidiary of HealthBank Holdings Ltd, combining the discipline of an established holding group with a dedicated agri-technology and field-operations team. We work with owners as long-term operating partners — measured on standards kept and profits grown, not licenses sold.</p>
+    </div>
+    <ul class="gov-facts reveal">
+      <li><span class="k">Parent group</span><span class="v">HealthBank Holdings Ltd</span></li>
+      <li><span class="k">Model</span><span class="v">Managed operations + SaaS platform (software with execution)</span></li>
+      <li><span class="k">Coverage</span><span class="v">Crop-agnostic — plantations, estates and agribusinesses, from farm to global markets</span></li>
+      <li><span class="k">Delivery</span><span class="v">AcreLogix Core (platform) · Field (operations) · Mobile (field app)</span></li>
+      <li><span class="k">Compliance</span><span class="v">Export documentation, phytosanitary processing, full-chain traceability</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section class="final section" id="contact">
+  <div class="wrap reveal">
+    <h2>Put your operation on <em>one system</em> — and one operator.</h2>
+    <p>Tell us about your land and we'll walk you through the platform, the field model and what the first 90 days look like.</p>
+    <div class="hero-ctas" style="margin-top:32px">
+      <button type="button" class="btn btn-teal" onclick="openContact('demo')">Request a demo</button>
+      <button type="button" class="btn btn-outline" style="border-color:rgba(244,243,236,.5);color:var(--bone)" onclick="openContact('investor-relations')">Contact investor relations</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="#" style="filter:brightness(1.4)">
+          <svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 2 L29 8 V18 C29 25 23 29.5 16 31 C9 29.5 3 25 3 18 V8 Z" fill="#f4f3ec"/>
+            <path d="M8 22 L20 12 M8 17 L17 9.5 M11 25 L23 15" stroke="#101f17" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="23" cy="9" r="3" fill="#0fa47f"/>
+          </svg>
+          <span class="logo-word" style="color:#f4f3ec"><span class="lt">Acre</span><span class="bd">Logix</span></span>
+        </a>
+        <p>A unified operating platform that digitises production, traceability, logistics and trade across plantations, farms and food supply chains.</p>
+      </div>
+      <div>
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#platform">AcreLogix Core</a></li>
+          <li><a href="#platform">AcreLogix Field</a></li>
+          <li><a href="#platform">AcreLogix Mobile</a></li>
+          <li><a href="#capabilities">Technology</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Audiences</h5>
+        <ul>
+          <li><a href="#owners">Plantation owners</a></li>
+          <li><a href="#investors">Investors &amp; government</a></li>
+          <li><a href="#about">About us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="mailto:hello@acrelogix.com">hello@acrelogix.com</a></li>
+          <li><a href="mailto:investors@acrelogix.com">investors@acrelogix.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ACRELOGIX · A SUBSIDIARY OF HEALTHBANK HOLDINGS LTD</span>
+      <span>PRECISION SOFTWARE · FIELD EXECUTION</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// mobile nav
+const burger=document.getElementById('burger'),links=document.getElementById('navLinks');
+burger.addEventListener('click',()=>{
+  const open=links.classList.toggle('open');
+  burger.setAttribute('aria-expanded',open);
+});
+links.querySelectorAll('a, button').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+
+// scroll reveal
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduced&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+  }),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+}else{
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+}
+</script>
+<!-- ================= CONTACT MODAL ================= -->
+<div class="modal-overlay" id="contactOverlay" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+  <div class="modal-panel" id="contactPanel">
+    <button type="button" class="modal-close" id="contactClose" aria-label="Close">&times;</button>
+
+    <div id="contactFormWrap">
+      <p class="modal-tag" id="contactTag">Get in touch</p>
+      <h3 id="contactTitle">Request a demo</h3>
+      <p class="modal-route">Sent directly to <b id="contactRouteEmail">hello@acrelogix.com</b></p>
+
+      <form id="contactForm">
+        <input type="hidden" name="route" id="contactRoute" value="demo">
+        <input type="hidden" name="subject" id="contactSubject" value="Demo request">
+
+        <!-- honeypot: left blank by humans, often filled by bots -->
+        <div class="field field-hp" aria-hidden="true">
+          <label for="website">Leave this field blank</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="cName">Full name</label>
+          <input type="text" id="cName" name="name" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="cEmail">Email address</label>
+          <input type="email" id="cEmail" name="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="cCompany">Company <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></label>
+          <input type="text" id="cCompany" name="company" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="cMessage">Message</label>
+          <textarea id="cMessage" name="message" rows="4" required></textarea>
+        </div>
+
+        <div class="modal-msg" id="contactMsg"></div>
+        <button type="submit" class="btn btn-solid modal-submit" id="contactSubmit">Send message</button>
+      </form>
+    </div>
+
+    <div class="modal-success" id="contactSuccess" style="display:none">
+      <svg viewBox="0 0 52 52" fill="none"><circle cx="26" cy="26" r="25" stroke="#0fa47f" stroke-width="2"/><path d="M15 27 L22 34 L37 18" stroke="#0fa47f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>Message sent</h3>
+      <p>Thanks — we'll be in touch shortly at the email address you provided.</p>
+      <button type="button" class="btn btn-outline" style="margin-top:18px" id="contactSuccessClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- contact modal: route config ----
+const CONTACT_ROUTES = {
+  'demo': {
+    title: 'Request a demo',
+    tag: 'Talk to the team',
+    subject: 'Demo request',
+    email: 'hello@acrelogix.com'
+  },
+  'investor-relations': {
+    title: 'Investor relations',
+    tag: 'Talk to investor relations',
+    subject: 'Investor relations inquiry',
+    email: 'investors@acrelogix.com'
+  },
+  'investor-brief': {
+    title: 'Request the investor brief',
+    tag: 'Talk to investor relations',
+    subject: 'Investor brief request',
+    email: 'investors@acrelogix.com'
+  }
+};
+
+const overlay = document.getElementById('contactOverlay');
+const panel = document.getElementById('contactPanel');
+const formWrap = document.getElementById('contactFormWrap');
+const successWrap = document.getElementById('contactSuccess');
+const form = document.getElementById('contactForm');
+const msgBox = document.getElementById('contactMsg');
+const submitBtn = document.getElementById('contactSubmit');
+let lastFocused = null;
+
+function openContact(routeKey){
+  const r = CONTACT_ROUTES[routeKey] || CONTACT_ROUTES['demo'];
+  document.getElementById('contactTag').textContent = r.tag;
+  document.getElementById('contactTitle').textContent = r.title;
+  document.getElementById('contactRouteEmail').textContent = r.email;
+  document.getElementById('contactRoute').value = routeKey;
+  document.getElementById('contactSubject').value = r.subject;
+
+  formWrap.style.display = '';
+  successWrap.style.display = 'none';
+  msgBox.classList.remove('show','error','success');
+  msgBox.textContent = '';
+  form.reset();
+  document.getElementById('contactRoute').value = routeKey;
+  document.getElementById('contactSubject').value = r.subject;
+
+  lastFocused = document.activeElement;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('cName').focus(), 50);
+}
+
+function closeContact(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  if (lastFocused) lastFocused.focus();
+}
+
+document.getElementById('contactClose').addEventListener('click', closeContact);
+document.getElementById('contactSuccessClose').addEventListener('click', closeContact);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeContact(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeContact(); });
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // honeypot check — if filled, silently pretend success (bot)
+  if (document.getElementById('website').value) {
+    formWrap.style.display = 'none';
+    successWrap.style.display = 'block';
+    return;
+  }
+
+  msgBox.classList.remove('show','error','success');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Sending…';
+
+  try {
+    const res = await fetch('https://send.acrelogix.com/send.php', {
+      method: 'POST',
+      body: new FormData(form)
+    });
+    const data = await res.json().catch(() => ({success:false}));
+
+    if (res.ok && data.success) {
+      formWrap.style.display = 'none';
+      successWrap.style.display = 'block';
+    } else {
+      throw new Error(data.error || 'Something went wrong. Please try again.');
+    }
+  } catch (err) {
+    msgBox.textContent = err.message || 'Could not send your message. Please try again or email us directly.';
+    msgBox.classList.add('show','error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send message';
+  }
+});
+</script>
+</body>
+</html>
